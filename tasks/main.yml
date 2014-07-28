@@ -37,6 +37,7 @@
     rule=allow
     port=22
     delete=yes
+  when: ansible_ssh_port != 22
 
 - name: Add new user
   user: >
