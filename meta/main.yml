@@ -4,4 +4,4 @@
 dependencies:
   - { role: mi11er.ufw }
 
-version: 1.0.0
+version: 1.0.1
