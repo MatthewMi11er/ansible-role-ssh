@@ -15,6 +15,6 @@ galaxy_info:
     - system
 
 dependencies:
-  - { role: matthewmi11er.ufw }
+  - { role: MatthewMi11er.ufw }
 
 version: 1.0.1
