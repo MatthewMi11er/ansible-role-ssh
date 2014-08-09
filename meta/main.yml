@@ -1,7 +1,20 @@
 ---
 # ssh/meta/main.yml
 
+galaxy_info:
+  author: Matthew Miller
+  description: A Base SSH Config
+  company:
+  license: license (MIT)
+  min_ansible_version: 1.6
+  platforms:
+    - name: Ubuntu
+      versions:
+        - trusty
+  categories:
+    - system
+
 dependencies:
-  - { role: mi11er.ufw }
+  - { role: matthewmi11er.ufw }
 
 version: 1.0.1
