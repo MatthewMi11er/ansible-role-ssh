@@ -20,7 +20,7 @@ matthewmi11er.ufw
 ```yml
     - hosts: servers
       roles:
-         - { role: matthewmi11er.ssh }
+         - { role: MatthewMi11er.ssh }
 
 ## License
 
