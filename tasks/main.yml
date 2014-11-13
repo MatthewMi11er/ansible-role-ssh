@@ -13,18 +13,30 @@
     regexp='^PasswordAuthentication'
     line='PasswordAuthentication no'
   notify: Restart ssh
-
-- name: Allow new SSH port
-  ufw: rule=allow port={{ ssh_port }}
-
+  
+- name: Change UFW app profile 
+  ini_file: >
+    dest=/etc/ufw/applications.d/AltSSH
+    section=AltSSH
+    option=ports
+    value='{{ ssh_port }}/tcp'
+    backup=yes
+  
 - name: Change SSH port
   lineinfile: >
     dest=/etc/ssh/sshd_config
     regexp='^Port'
     line='Port {{ ssh_port }}'
   register: ssh_set_port
+  
 
-- name: Restart ssh
+  
+  - name: Update App  Profile
+    
+    when: ufw_app_profile|changed
+
+- name: Restart ssh and update ufw
+  command: ufw app update AltSSH && service ssh restart
   service: name=ssh state=restarted enabled=yes
   when: ssh_set_port|changed
 
