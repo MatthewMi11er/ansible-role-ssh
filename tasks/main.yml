@@ -1,67 +1,15 @@
 ---
 # file: roles/ssh/tasks/main.yml
-- name: Disable SSH ChallenageResponse Login
-  lineinfile: >
-    dest=/etc/ssh/sshd_config
-    regexp='^ChallengeResponseAuthentication'
-    line='ChallengeResponseAuthentication no'
-  notify: Restart ssh
-
-- name: Disable SSH Password Login
-  lineinfile: >
-    dest=/etc/ssh/sshd_config
-    regexp='^PasswordAuthentication'
-    line='PasswordAuthentication no'
-  notify: Restart ssh
+- name: Setup
+  include: setup.yml
   
-- name: Change UFW app profile 
-  ini_file: >
-    dest=/etc/ufw/applications.d/AltSSH
-    section=AltSSH
-    option=ports
-    value='{{ ssh_port }}/tcp'
-    backup=yes
+- name: Set port
+  include: port.yml
   
-- name: Change SSH port
-  lineinfile: >
-    dest=/etc/ssh/sshd_config
-    regexp='^Port'
-    line='Port {{ ssh_port }}'
-  register: ssh_set_port
-  
+- name: Add user
+  include: user.yml
+  when: ssh_user != '' and ssh_public_key != '' and ssh_private_key != ''
 
-  
-  - name: Update App  Profile
-    
-    when: ufw_app_profile|changed
 
-- name: Restart ssh and update ufw
-  command: ufw app update AltSSH && service ssh restart
-  service: name=ssh state=restarted enabled=yes
-  when: ssh_set_port|changed
 
-- name: use new port
-  set_fact:
-    ansible_ssh_port: '{{ ssh_port }}'
 
-- name: Disable Defualt SSH port
-  ufw: >
-    rule=allow
-    port=22
-    delete=yes
-  when: ansible_ssh_port != 22
-
-- name: Add new user
-  user: >
-    name='{{ ssh_user }}'
-    groups=sudo
-    shell='/bin/bash'
-
-- name: Add SSH key
-  authorized_key: >
-    user={{ ssh_user }}
-    key="{{ lookup('file', ssh_public_key) }}"
-    state=present
-    manage_dir=yes
-  notify:
-    - Restart ssh

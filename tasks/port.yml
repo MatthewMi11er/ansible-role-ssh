@@ -1,0 +1,30 @@
+---
+# file: roles/ssh/tasks/port.yml
+
+- name: Change SSH port
+  lineinfile: >
+    dest=/etc/ssh/sshd_config
+    regexp='^Port'
+    line='Port {{ ssh_port }}'
+  register: ssh_set_port
+  
+- name: Change UFW app profile 
+  ini_file: >
+    dest=/etc/ufw/applications.d/AltSSH
+    section=AltSSH
+    option=ports
+    value='{{ ssh_port }}/tcp'
+    backup=yes
+  when: ssh_set_port|changed
+    
+- name: Update UFW app profile
+  command: ufw app update AltSSH
+  when: ssh_set_port|changed
+  
+- name: Reload ssh and reload ufw
+  shell: 'ufw reload && service ssh reload'
+  when: ssh_set_port|changed
+
+- name: use new port
+  set_fact:
+    ansible_ssh_port: '{{ ssh_port }}'
