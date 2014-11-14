@@ -1,0 +1,15 @@
+---
+# file: roles/ssh/tasks/setup.yml
+- name: Disable SSH ChallenageResponse Login
+  lineinfile: >
+    dest=/etc/ssh/sshd_config
+    regexp='^ChallengeResponseAuthentication'
+    line='ChallengeResponseAuthentication no'
+  notify: Restart ssh
+
+- name: Disable SSH Password Login
+  lineinfile: >
+    dest=/etc/ssh/sshd_config
+    regexp='^PasswordAuthentication'
+    line='PasswordAuthentication no'
+  notify: Restart ssh

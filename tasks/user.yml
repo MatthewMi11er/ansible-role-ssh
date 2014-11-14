@@ -1,0 +1,17 @@
+---
+# file: roles/ssh/tasks/user.yml
+
+- name: Add new user
+  user: >
+    name='{{ ssh_user }}'
+    groups=sudo
+    shell='/bin/bash'
+
+- name: Add SSH key
+  authorized_key: >
+    user={{ ssh_user }}
+    key="{{ lookup('file', ssh_public_key) }}"
+    state=present
+    manage_dir=yes
+  notify:
+    - Restart ssh

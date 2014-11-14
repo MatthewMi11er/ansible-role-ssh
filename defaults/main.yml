@@ -1,0 +1,7 @@
+---
+# ssh/deafults/main.yml
+
+#ssh_port: 
+ssh_user: ''
+ssh_public_key: ''
+ssh_private_key: ''

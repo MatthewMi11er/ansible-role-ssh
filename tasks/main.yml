@@ -1,55 +1,20 @@
 ---
 # file: roles/ssh/tasks/main.yml
-- name: Disable SSH ChallenageResponse Login
-  lineinfile: >
-    dest=/etc/ssh/sshd_config
-    regexp='^ChallengeResponseAuthentication'
-    line='ChallengeResponseAuthentication no'
-  notify: Restart ssh
+- name: Setup
+  include: setup.yml
+  
+- name: Get Current SSH port
+  command: 'sed -n -e "s/^\Port\s\+\([0-9]\+\).*/\1/pIi" /etc/ssh/sshd_config'
+  register: ssh_current_port  
+  
+- name: Set port
+  include: port.yml
+  when: ssh_port is defined and ssh_current_port != ssh_port
+  
+- name: Add user
+  include: user.yml
+  when: ssh_user != '' and ssh_public_key != '' and ssh_private_key != ''
 
-- name: Disable SSH Password Login
-  lineinfile: >
-    dest=/etc/ssh/sshd_config
-    regexp='^PasswordAuthentication'
-    line='PasswordAuthentication no'
-  notify: Restart ssh
 
-- name: Allow new SSH port
-  ufw: rule=allow port={{ ssh_port }}
 
-- name: Change SSH port
-  lineinfile: >
-    dest=/etc/ssh/sshd_config
-    regexp='^Port'
-    line='Port {{ ssh_port }}'
-  register: ssh_set_port
 
-- name: Restart ssh
-  service: name=ssh state=restarted enabled=yes
-  when: ssh_set_port|changed
-
-- name: use new port
-  set_fact:
-    ansible_ssh_port: '{{ ssh_port }}'
-
-- name: Disable Defualt SSH port
-  ufw: >
-    rule=allow
-    port=22
-    delete=yes
-  when: ansible_ssh_port != 22
-
-- name: Add new user
-  user: >
-    name='{{ ssh_user }}'
-    groups=sudo
-    shell='/bin/bash'
-
-- name: Add SSH key
-  authorized_key: >
-    user={{ ssh_user }}
-    key="{{ lookup('file', ssh_public_key) }}"
-    state=present
-    manage_dir=yes
-  notify:
-    - Restart ssh
