@@ -4,7 +4,7 @@
   include: setup.yml
   
 - name: Get Current SSH port
-  command: "sed -n -e 's/^\Port\s\+\([0-9]\+\).*/\1/pIi' /etc/ssh/sshd_config"
+  command: 'sed -n -e "s/^\Port\s\+\([0-9]\+\).*/\1/pIi" /etc/ssh/sshd_config'
   register: ssh_current_port  
   
 - name: Set port

@@ -27,7 +27,7 @@
 
 - name: check if ansible and current ssh port are the same
   fail: msg='SSH port change update and rerun playbook'
-  when: ansible_ssh_port is defined and ansible_ssh_port != ssh_current_port
+  when: ssh_set_port|changed and ansible_ssh_port is defined and ansible_ssh_port != ssh_current_port
 
 - name: use new port
   set_fact:
