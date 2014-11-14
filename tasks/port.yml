@@ -25,6 +25,11 @@
   shell: 'ufw reload && service ssh reload'
   when: ssh_set_port|changed
 
+- name: check if ansible and current ssh port are the same
+  fail: msg='SSH port change update and rerun playbook'
+  when: ansible_ssh_port is defined and ansible_ssh_port != ssh_current_port
+
 - name: use new port
   set_fact:
     ansible_ssh_port: '{{ ssh_port }}'
+

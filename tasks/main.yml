@@ -3,8 +3,13 @@
 - name: Setup
   include: setup.yml
   
+- name: Get Current SSH port
+  command: "sed -n -e 's/^\Port\s\+\([0-9]\+\).*/\1/pIi' /etc/ssh/sshd_config"
+  register: ssh_current_port  
+  
 - name: Set port
   include: port.yml
+  when: ssh_port is defined and ssh_current_port != ssh_port
   
 - name: Add user
   include: user.yml
