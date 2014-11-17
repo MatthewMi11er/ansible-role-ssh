@@ -14,7 +14,7 @@
     section=AltSSH
     option=ports
     value='{{ ssh_port }}/tcp'
-    backup=yes
+    backup=no
   when: ssh_set_port|changed
     
 - name: Update UFW app profile
