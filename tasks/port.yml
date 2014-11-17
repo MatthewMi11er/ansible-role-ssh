@@ -32,4 +32,4 @@
 - name: use new port
   set_fact:
     ansible_ssh_port: '{{ ssh_port }}'
-
+  when: ssh_set_port|changed
