@@ -6,6 +6,8 @@
     name='{{ ssh_user }}'
     groups=sudo
     shell='/bin/bash'
+  tags:
+    - ssh
 
 - name: Add SSH key
   authorized_key: >
@@ -15,3 +17,5 @@
     manage_dir=yes
   notify:
     - Restart ssh
+  tags:
+    - ssh
