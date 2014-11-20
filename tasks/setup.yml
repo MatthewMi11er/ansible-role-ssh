@@ -6,6 +6,8 @@
     regexp='^ChallengeResponseAuthentication'
     line='ChallengeResponseAuthentication no'
   notify: Restart ssh
+  tags:
+    - ssh
 
 - name: Disable SSH Password Login
   lineinfile: >
@@ -13,3 +15,5 @@
     regexp='^PasswordAuthentication'
     line='PasswordAuthentication no'
   notify: Restart ssh
+  tags:
+    - ssh

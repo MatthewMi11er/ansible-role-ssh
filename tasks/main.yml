@@ -2,19 +2,27 @@
 # file: roles/ssh/tasks/main.yml
 - name: Setup
   include: setup.yml
+  tags:
+    - ssh
   
 - name: Get Current SSH port
   command: 'sed -n -e "s/^\Port\s\+\([0-9]\+\).*/\1/pIi" /etc/ssh/sshd_config'
   register: ssh_current_port  
   changed_when: false
+  tags:
+    - ssh
   
 - name: Set port
   include: port.yml
   when: ssh_port is defined and ssh_current_port != ssh_port
+  tags:
+    - ssh
   
 - name: Add user
   include: user.yml
   when: ssh_user != '' and ssh_public_key != '' and ssh_private_key != ''
+  tags:
+    - ssh
 
 
 
